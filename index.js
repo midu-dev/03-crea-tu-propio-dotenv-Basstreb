@@ -1,7 +1,7 @@
 // reference: https://www.npmjs.com/package/dotenv
 const fs = require('node:fs')
 
-function config (options = {}) {
+function config(options = {}) {
   let dotenv
   const path = options.path ?? '.env'
   try {
@@ -14,7 +14,12 @@ function config (options = {}) {
   const lines = dotenv.split('\n')
   for (const line of lines) {
     const [key, value] = line.split('=')
-    process.env[key] = value.split('"').join('')
+    if (key && value !== undefined) {
+      const cleanValue = value.startsWith('"') && value.endsWith('"')
+        ? value.slice(1, -1)
+        : value
+      process.env[key.trim()] = cleanValue.trim()
+    }
   }
 }
 
